@@ -41,14 +41,23 @@ export default function Home() {
   }
 
   async function handleAdd(tx: Omit<Transaction, "id" | "created_at">) {
+    const row = {
+      type: tx.type,
+      amount: tx.amount,
+      category: tx.category,
+      description: tx.description || "",
+      date: tx.date,
+    };
+
     const { data, error } = await supabase
       .from("transactions")
-      .insert(tx)
+      .insert(row)
       .select()
       .single();
 
     if (error) {
       console.error("Insert error:", error);
+      alert("저장 실패: " + error.message);
       return;
     }
     if (data) setTransactions((prev) => [data, ...prev]);
